@@ -355,15 +355,18 @@ void loop() {
 
 
 
-
+if (!isSinglePlayer) {
   // Send regular updates
   sendPlayerUpdate();
+}
 
   // Player 1 checks for attacks
   if (player1.attacking && player1.attackTimer > 0) {
     if (checkAttackCollision(player1, player2)) {
       processAttack(player1, player2);
+      if (!isSinglePlayer) {
       sendAttackNotification(player1, player2);
+      }
     }
   }
 
@@ -371,7 +374,9 @@ void loop() {
   if (player2.attacking && player2.attackTimer > 0) {
     if (checkAttackCollision(player2, player1)) {
       processAttack(player2, player1);
+      if (!isSinglePlayer) {
       sendAttackNotification(player2, player1);
+      }
     }
   }
 
@@ -402,7 +407,7 @@ void controlAI(Player &player) {
     player.knockbackTimer--;
     return;  // Skip other movement while knockback is active
   }
-
+  player.idle = false;
   // Define idle chance (30% of the time)
   if (random(0, 100) < 70) {
     player.velX = 0;  // Stay idle
@@ -795,7 +800,8 @@ void drawPlayer(Player &player) {
   if (player.idle) {
     if (arduboy.frameCount % 60 < 30) {
       // Draw a slightly shorter rectangle for 10 frames
-      arduboy.fillRect(player.x, player.y + 1, PLAYER_WIDTH, PLAYER_HEIGHT - 1, WHITE);
+      //arduboy.fillRect(player.x, player.y + 1, PLAYER_WIDTH, PLAYER_HEIGHT - 1, WHITE);
+      arduboy.fillRect(player.x, player.y, PLAYER_WIDTH, PLAYER_HEIGHT, WHITE);
     } else {
       // Draw the full rectangle for the next 10 frames
       arduboy.fillRect(player.x, player.y, PLAYER_WIDTH, PLAYER_HEIGHT, WHITE);
